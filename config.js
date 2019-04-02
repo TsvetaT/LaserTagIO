@@ -85,7 +85,7 @@ module.exports = {
   // We can use this to filter out properties which don't need to be sent
   // to the front end.
   OUTBOUND_STATE_TRANSFORMERS: {
-    coin: genericStateTransformer,
+    //coin: genericStateTransformer,
     player: genericStateTransformer
   }
 };

@@ -193,10 +193,10 @@ CellController.prototype.dropCoins = function (coins) {
         'Check that probabilities add up to 1 in COIN_TYPES config option.');
     }
 
-    var coin = this.coinManager.addCoin(chosenCoinType.value, chosenCoinType.type, chosenCoinType.radius);
-    if (coin) {
+    //var coin = this.coinManager.addCoin(chosenCoinType.value, chosenCoinType.type, chosenCoinType.radius);
+   /* if (coin) {
       coins[coin.id] = coin;
-    }
+    }*/
   }
 };
 
