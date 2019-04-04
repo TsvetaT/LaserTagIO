@@ -263,6 +263,11 @@ CellController.prototype.applyPlayerOps = function (playerIds, players, coins) {
       var movedHorizontally = false;
       var movedVertically = false;
 
+      if (playerOp.sh)
+      {
+        //good
+      }
+
       if (playerOp.u) {
         movementVector.y = -moveSpeed;
         player.direction = 'up';

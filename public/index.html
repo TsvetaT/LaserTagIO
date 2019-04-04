@@ -118,7 +118,8 @@
             up: game.input.keyboard.addKey(Phaser.Keyboard.W),
             down: game.input.keyboard.addKey(Phaser.Keyboard.S),
             right: game.input.keyboard.addKey(Phaser.Keyboard.D),
-            left: game.input.keyboard.addKey(Phaser.Keyboard.A)
+            left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+            shoot: game.input.activePointer.leftButton
           };
 
           game.load.image('background', BACKGROUND_TEXTURE);
@@ -323,6 +324,7 @@
         function create() {
           background = game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
           game.time.advancedTiming = true;
+          game.input.mouse.capture = true;
           game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
           // Generate a random name for the user.
@@ -358,6 +360,11 @@
         function update() {
           var didAction = false;
           var playerOp = {};
+          if (keys.shoot.isDown)
+          {
+            playerOp.sh=1;
+            didAction=true;
+          }
           if (keys.up.isDown) {
             playerOp.u = 1;
             didAction = true;
