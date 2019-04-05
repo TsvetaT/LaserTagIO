@@ -49,6 +49,7 @@ var rbush = require('rbush');
 var SAT = require('sat');
 var config = require('./config');
 var BotManager = require('./bot-manager').BotManager;
+var WallManager = require('./wall-manager').WallManager;
 var CoinManager = require('./coin-manager').CoinManager;
 
 // This controller will be instantiated once for each
@@ -76,6 +77,7 @@ var CellController = function (options, util) {
   this.coinMaxCount = Math.round(config.COIN_MAX_COUNT / this.worldCellCount);
   this.coinDropInterval = config.COIN_DROP_INTERVAL * this.worldCellCount;
   this.botCount = Math.round(config.BOT_COUNT / this.worldCellCount);
+  this.wallCount = Math.round(config.WALL_COUNT / this.worldCellCount);
 
   var cellData = options.cellData;
 
@@ -103,6 +105,22 @@ var CellController = function (options, util) {
     {r: 1},
     {l: 1}
   ];
+
+///////////////////////
+  this.wallManager = new WallManager({
+    worldWidth: config.WORLD_WIDTH,
+    worldHeight: config.WORLD_HEIGHT,
+    wallDefaultDiameter: config.WALL_DEFAULT_DIAMETER,
+    wallMoveSpeed: config.WALL_MOVE_SPEED,
+    wallMass: config.WALL_MASS,
+  });
+
+  for (var b = 0; b < this.wallCount; b++) {
+    var wall = this.wallManager.addWall();
+    cellData.player[wall.id] = wall;
+  }
+
+  //////////////////////
 
   this.coinManager = new CoinManager({
     cellData: options.cellData,
@@ -165,6 +183,7 @@ CellController.prototype.run = function (cellData) {
   this.findPlayerOverlaps(playerIds, players, coins);
   this.dropCoins(coins);
   this.generateBotOps(playerIds, players);
+  this.generateWallOps(playerIds, players);
   this.applyPlayerOps(playerIds, players, coins);
 };
 
@@ -224,6 +243,24 @@ CellController.prototype.generateBotOps = function (playerIds, players, coins) {
   });
 };
 
+CellController.prototype.generateWallOps = function (playerIds, players, coins) {
+  var self = this;
+
+  playerIds.forEach(function (playerId) {
+    var player = players[playerId];
+    // States which are external are managed by a different cell, therefore changes made to these
+    // states are not saved unless they are grouped with one or more internal states from the current cell.
+    // See util.groupStates() method near the bottom of this file for details.
+    if (player.subtype == 'wall' && !player.external) {
+      var radius = Math.round(player.diam / 2);
+
+      if (player.repeatOp) {
+        player.op = player.repeatOp;
+      }
+    }
+  });
+};
+
 CellController.prototype.keepPlayerOnGrid = function (player) {
   var radius = Math.round(player.diam / 2);
 
@@ -254,6 +291,8 @@ CellController.prototype.applyPlayerOps = function (playerIds, players, coins) {
     var moveSpeed;
     if (player.subtype == 'bot') {
       moveSpeed = player.speed;
+    } else if (player.subtype == 'wall') {
+      moveSpeed = 0;
     } else {
       moveSpeed = config.PLAYER_DEFAULT_MOVE_SPEED;
     }

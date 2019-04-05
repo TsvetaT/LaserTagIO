@@ -73,6 +73,13 @@
           down: 'img/bot-front.gif'
         };
 
+        var wallTextures = {
+          up: 'img/bot-back.gif',
+          left: 'img/bot-side-left.gif',
+          right: 'img/bot-side-right.gif',
+          down: 'img/bot-front.gif'
+        };
+
         // Map the score value to the texture.
         var grassTextures = {
           1: 'img/grass-1.gif',
@@ -138,6 +145,11 @@
           game.load.image('bot-down', botTextures.down);
           game.load.image('bot-right', botTextures.right);
           game.load.image('bot-left', botTextures.left);
+
+          game.load.image('wall-up', wallTextures.up);
+          game.load.image('wall-down', wallTextures.down);
+          game.load.image('wall-right', wallTextures.right);
+          game.load.image('wall-left', wallTextures.left);
 
           game.load.image('grass-1', grassTextures[1]);
           game.load.image('grass-2', grassTextures[2]);
