@@ -73,13 +73,6 @@
           down: 'img/bot-front.gif'
         };
 
-        var wallTextures = {
-          up: 'img/bot-back.gif',
-          left: 'img/bot-side-left.gif',
-          right: 'img/bot-side-right.gif',
-          down: 'img/bot-front.gif'
-        };
-
         // Map the score value to the texture.
         var grassTextures = {
           1: 'img/grass-1.gif',
@@ -145,11 +138,6 @@
           game.load.image('bot-down', botTextures.down);
           game.load.image('bot-right', botTextures.right);
           game.load.image('bot-left', botTextures.left);
-
-          game.load.image('wall-up', wallTextures.up);
-          game.load.image('wall-down', wallTextures.down);
-          game.load.image('wall-right', wallTextures.right);
-          game.load.image('wall-left', wallTextures.left);
 
           game.load.image('grass-1', grassTextures[1]);
           game.load.image('grass-2', grassTextures[2]);
@@ -334,6 +322,28 @@
         }
 
         function create() {
+
+          game.physics.startSystem(Phaser.Physics.ARCADE);
+
+          game.stage.backgroundColor = '#313131';
+
+          bullets = game.add.group(); 
+          bullets.enableBody = true;
+          bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+          bullets.createMultiple(50, 'bullet');
+          bullets.setAll('checkWorldBounds', true);
+          bullets.setAll('outOfBoundsKill', true);
+    
+          sprite = game.add.sprite(400, 300, 'arrow');
+          sprite.anchor.set(0.5);
+
+          game.physics.enable(sprite, Phaser.Physics.ARCADE);
+
+          sprite.body.allowRotation = false;
+
+          //----------------------------
+
           background = game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
           game.time.advancedTiming = true;
           game.input.mouse.capture = true;
@@ -369,14 +379,40 @@
 
         var lastActionTime = 0;
 
+        function fire()
+        {
+
+            game.debug.text("shots fired",100,100,"#00ff00");
+         //if (game.time.now > nextFire && bullets.countDead() > 0)
+          //{
+            // nextFire = game.time.now + fireRate;
+
+ //             var bullet = bullets.getFirstDead();
+
+         //    bullet.reset(sprite.x - 8, sprite.y - 8);
+
+           //  game.physics.arcade.moveToPointer(bullet, 300);
+   //      }
+
+        }
+
         function update() {
+
+          sprite.rotation = game.physics.arcade.angleToPointer(sprite);
+          if (game.input.activePointer.isDown)
+          {
+             fire();
+          }
+
           var didAction = false;
           var playerOp = {};
-          if (keys.shoot.isDown)
+         /* if (keys.shoot.isDown)
           {
             playerOp.sh=1;
             didAction=true;
-          }
+            playerOp.mouseX=game.input.x;
+            playerOp.mouseY=game.input.y;
+          }*/
           if (keys.up.isDown) {
             playerOp.u = 1;
             didAction = true;
